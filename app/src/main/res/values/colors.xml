@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="night_blue">#183153</color>
+    <color name="night_blue_dark">#10243F</color>
+    <color name="night_blue_soft">#DCE8F8</color>
+    <color name="night_gold">#F4B942</color>
+    <color name="night_gold_soft">#FFF0C7</color>
+    <color name="night_background">#F5F7FB</color>
+    <color name="night_surface">#FFFFFF</color>
+    <color name="night_surface_alt">#EEF2F7</color>
+    <color name="night_outline">#D8E0EA</color>
+    <color name="night_text">#172033</color>
+    <color name="night_text_muted">#667085</color>
+    <color name="night_white">#FFFFFF</color>
+</resources>

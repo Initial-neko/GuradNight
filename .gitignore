@@ -1,0 +1,33 @@
+# Gradle
+.gradle/
+.gradle-user-home/
+build/
+app/build/
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+
+# Local machine config (contains SDK path etc.)
+local.properties
+
+# Local Android env / scratch dirs
+.android-user-home/
+.android-adb/
+tmp-red/
+
+# Tool outputs
+tools/out-*/
+
+# Captures & profiling
+captures/
+*.prof
+
+# Signing keys — never commit
+*.jks
+*.keystore
+keystore.properties
+
+# OS junk
+.DS_Store
+Thumbs.db
