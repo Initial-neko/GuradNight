@@ -2,16 +2,15 @@ package com.example.nightscreenguard;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
 import java.util.ArrayList;
 import java.util.List;
 
-/** Bounded local fallback for screen-on events observed while the service was alive. */
+/* loaded from: classes2.dex */
 public final class ScreenEventStore {
     private static final String FILE_NAME = "night_screen_events";
     private static final String KEY_EVENTS = "events";
-    private static final String KEY_LAST_SERVICE_START = "last_service_start";
     private static final String KEY_LAST_SERVICE_DESTROY = "last_service_destroy";
+    private static final String KEY_LAST_SERVICE_START = "last_service_start";
     private static final int MAX_EVENTS = 2000;
 
     private ScreenEventStore() {
@@ -19,8 +18,8 @@ public final class ScreenEventStore {
 
     public static void recordScreenOn(Context context, long timestamp) {
         List<Long> events = readAll(context);
-        events.add(timestamp);
-        int first = Math.max(0, events.size() - MAX_EVENTS);
+        events.add(Long.valueOf(timestamp));
+        int first = Math.max(0, events.size() - 2000);
         StringBuilder encoded = new StringBuilder();
         for (int index = first; index < events.size(); index++) {
             if (encoded.length() > 0) {
@@ -34,7 +33,7 @@ public final class ScreenEventStore {
     public static List<Long> readEvents(Context context, long fromMillis, long toMillis) {
         List<Long> result = new ArrayList<>();
         for (Long timestamp : readAll(context)) {
-            if (timestamp >= fromMillis && timestamp < toMillis) {
+            if (timestamp.longValue() >= fromMillis && timestamp.longValue() < toMillis) {
                 result.add(timestamp);
             }
         }
@@ -43,7 +42,10 @@ public final class ScreenEventStore {
 
     public static long lastScreenOnAt(Context context) {
         List<Long> events = readAll(context);
-        return events.isEmpty() ? -1L : events.get(events.size() - 1);
+        if (events.isEmpty()) {
+            return -1L;
+        }
+        return events.get(events.size() - 1).longValue();
     }
 
     public static void markServiceStarted(Context context, long timestamp) {
@@ -70,15 +72,14 @@ public final class ScreenEventStore {
         }
         for (String value : encoded.split(",")) {
             try {
-                result.add(Long.parseLong(value));
-            } catch (NumberFormatException ignored) {
-                // Ignore a malformed entry and preserve the rest of the local history.
+                result.add(Long.valueOf(Long.parseLong(value)));
+            } catch (NumberFormatException e) {
             }
         }
         return result;
     }
 
     private static SharedPreferences preferences(Context context) {
-        return context.getApplicationContext().getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+        return context.getApplicationContext().getSharedPreferences(FILE_NAME, 0);
     }
 }
