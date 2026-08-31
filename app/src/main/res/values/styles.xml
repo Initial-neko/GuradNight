@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.NightScreenGuard" parent="@style/Theme.Material3.Light.NoActionBar">
+        <item name="android:windowBackground">@color/night_background</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:statusBarColor">@color/night_background</item>
+        <item name="android:navigationBarColor">@color/night_blue</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="colorOnPrimary">@color/night_white</item>
+        <item name="colorOnPrimaryContainer">@color/night_blue_dark</item>
+        <item name="colorOnSecondary">@color/night_blue_dark</item>
+        <item name="colorOnSurface">@color/night_text</item>
+        <item name="colorOnSurfaceVariant">@color/night_text_muted</item>
+        <item name="colorOutline">@color/night_outline</item>
+        <item name="colorPrimary">@color/night_blue</item>
+        <item name="colorPrimaryContainer">@color/night_blue_soft</item>
+        <item name="colorSecondary">@color/night_gold</item>
+        <item name="colorSecondaryContainer">@color/night_gold_soft</item>
+        <item name="colorSurface">@color/night_surface</item>
+        <item name="colorSurfaceVariant">@color/night_surface_alt</item>
+    </style>
+</resources>

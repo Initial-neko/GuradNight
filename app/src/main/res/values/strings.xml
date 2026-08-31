@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">夜间亮屏守护</string>
-    <string name="service_channel_name">守护服务</string>
-    <string name="reminder_channel_name">晚间提醒</string>
-    <string name="strong_channel_name">强提醒</string>
     <string name="screen_title">夜间亮屏守护</string>
     <string name="screen_subtitle">让夜晚安静一点</string>
+    <string name="reminder_channel_name">晚间提醒</string>
+    <string name="service_channel_name">守护服务</string>
+    <string name="strong_channel_name">强提醒</string>
 </resources>
