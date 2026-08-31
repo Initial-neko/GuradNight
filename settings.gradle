@@ -5,7 +5,6 @@ pluginManagement {
         maven { url = uri('https://maven.aliyun.com/repository/public') }
     }
 }
-
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -13,6 +12,5 @@ dependencyResolutionManagement {
         maven { url = uri('https://maven.aliyun.com/repository/public') }
     }
 }
-
 rootProject.name = 'NightScreenGuard'
 include ':app'

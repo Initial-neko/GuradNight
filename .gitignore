@@ -1,33 +1,23 @@
 # Gradle
 .gradle/
-.gradle-user-home/
 build/
-app/build/
+*/build/
 
-# Android Studio / IntelliJ
+# Android Studio / IDE
 .idea/
 *.iml
-
-# Local machine config (contains SDK path etc.)
 local.properties
-
-# Local Android env / scratch dirs
-.android-user-home/
-.android-adb/
-tmp-red/
-
-# Tool outputs
-tools/out-*/
-
-# Captures & profiling
 captures/
-*.prof
+.externalNativeBuild/
+.cxx/
 
-# Signing keys — never commit
-*.jks
-*.keystore
-keystore.properties
-
-# OS junk
+# 本地与系统
 .DS_Store
-Thumbs.db
+*.log
+
+# 构建产物
+*.apk
+*.aab
+*.keystore
+verify/out/
+verify/*.class
