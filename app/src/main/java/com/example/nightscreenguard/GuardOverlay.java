@@ -1,31 +1,30 @@
 package com.example.nightscreenguard;
 
+import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import android.content.Context;
-import android.util.Log;
-
-/** Card-sized overlay that leaves the rest of the current app usable. */
+/* loaded from: classes2.dex */
 public final class GuardOverlay {
     private static final String TAG = "NightScreenGuard";
-    private final android.os.Handler mainHandler = new android.os.Handler(android.os.Looper.getMainLooper());
     private Context appContext;
-    private WindowManager windowManager;
-    private View overlayView;
     private Button closeButton;
-    private TextView countdownView;
-    private long shownAt = -1L;
     private Runnable closeListener;
+    private TextView countdownView;
+    private View overlayView;
     private boolean testMode;
+    private WindowManager windowManager;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private long shownAt = -1;
 
     public boolean show(Context context, GuardConfig config) {
         return showInternal(context, config, false, null);
@@ -35,35 +34,31 @@ public final class GuardOverlay {
         return showInternal(context, config, true, onClosed);
     }
 
-    private boolean showInternal(Context context, GuardConfig config, boolean forTest,
-            Runnable onClosed) {
-        appContext = context.getApplicationContext();
-        if (!Settings.canDrawOverlays(appContext)) {
+    private boolean showInternal(Context context, GuardConfig config, boolean forTest, Runnable onClosed) {
+        this.appContext = context.getApplicationContext();
+        if (!Settings.canDrawOverlays(this.appContext)) {
             Log.w(TAG, "overlay_suppressed reason=overlay_permission_missing test=" + forTest);
             return false;
         }
-
-        long persistedShownAt = GuardConfigStore.overlayShownAt(appContext);
+        long persistedShownAt = GuardConfigStore.overlayShownAt(this.appContext);
         if (forTest) {
-            testMode = true;
-            closeListener = onClosed;
-            if (overlayView == null) {
-                shownAt = System.currentTimeMillis();
+            this.testMode = true;
+            this.closeListener = onClosed;
+            if (this.overlayView == null) {
+                this.shownAt = System.currentTimeMillis();
             }
-        } else if (overlayView == null && (persistedShownAt < 0
-                || GuardPolicy.canClose(System.currentTimeMillis(), persistedShownAt, config))) {
-            shownAt = System.currentTimeMillis();
-            GuardConfigStore.setOverlayShownAt(appContext, shownAt);
+        } else if (this.overlayView == null && (persistedShownAt < 0 || GuardPolicy.canClose(System.currentTimeMillis(), persistedShownAt, config))) {
+            this.shownAt = System.currentTimeMillis();
+            GuardConfigStore.setOverlayShownAt(this.appContext, this.shownAt);
         } else if (!forTest) {
-            shownAt = persistedShownAt >= 0 ? persistedShownAt : System.currentTimeMillis();
-            GuardConfigStore.setOverlayShownAt(appContext, shownAt);
+            this.shownAt = persistedShownAt >= 0 ? persistedShownAt : System.currentTimeMillis();
+            GuardConfigStore.setOverlayShownAt(this.appContext, this.shownAt);
         }
-
-        if (overlayView == null) {
+        if (this.overlayView == null) {
             createView();
         }
         updateCountdown();
-        return overlayView != null;
+        return this.overlayView != null;
     }
 
     public boolean restoreIfActive(Context context, GuardConfig config) {
@@ -75,33 +70,34 @@ public final class GuardOverlay {
     }
 
     public boolean dismissIfAllowed() {
-        if (appContext == null || overlayView == null) {
+        if (this.appContext == null || this.overlayView == null) {
             return false;
         }
-        GuardConfig config = GuardConfigStore.load(appContext);
-        if (!GuardPolicy.canClose(System.currentTimeMillis(), shownAt, config)) {
+        GuardConfig config = GuardConfigStore.load(this.appContext);
+        if (!GuardPolicy.canClose(System.currentTimeMillis(), this.shownAt, config)) {
             updateCountdown();
             return false;
         }
         removeView();
-        if (!testMode) {
-            GuardConfigStore.setOverlayShownAt(appContext, -1L);
+        if (!this.testMode) {
+            GuardConfigStore.setOverlayShownAt(this.appContext, -1L);
         }
-        Runnable listener = closeListener;
-        closeListener = null;
-        testMode = false;
+        Runnable listener = this.closeListener;
+        this.closeListener = null;
+        this.testMode = false;
         if (listener != null) {
             listener.run();
+            return true;
         }
         return true;
     }
 
     public void removeImmediately() {
         removeView();
-        closeListener = null;
-        testMode = false;
-        if (appContext != null) {
-            GuardConfigStore.setOverlayShownAt(appContext, -1L);
+        this.closeListener = null;
+        this.testMode = false;
+        if (this.appContext != null) {
+            GuardConfigStore.setOverlayShownAt(this.appContext, -1L);
         }
     }
 
@@ -110,103 +106,97 @@ public final class GuardOverlay {
     }
 
     private void createView() {
-        windowManager = (WindowManager) appContext.getSystemService(Context.WINDOW_SERVICE);
-        LinearLayout card = new LinearLayout(appContext);
-        card.setOrientation(LinearLayout.VERTICAL);
+        this.windowManager = (WindowManager) this.appContext.getSystemService("window");
+        LinearLayout card = new LinearLayout(this.appContext);
+        card.setOrientation(1);
         card.setPadding(dp(20), dp(16), dp(20), dp(14));
         GradientDrawable background = new GradientDrawable();
         background.setColor(Color.rgb(23, 43, 77));
         background.setCornerRadius(dp(18));
         card.setBackground(background);
-
-        TextView title = new TextView(appContext);
+        TextView title = new TextView(this.appContext);
         title.setText("现在是强提醒时间");
-        title.setTextColor(Color.WHITE);
-        title.setTextSize(18);
-        card.addView(title, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT));
-
-        TextView message = new TextView(appContext);
+        title.setTextColor(-1);
+        title.setTextSize(18.0f);
+        card.addView(title, new LinearLayout.LayoutParams(-2, -2));
+        TextView message = new TextView(this.appContext);
         message.setText("请放下手机，让自己休息一下");
         message.setTextColor(Color.rgb(220, 230, 245));
-        message.setTextSize(14);
-        LinearLayout.LayoutParams messageParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
+        message.setTextSize(14.0f);
+        LinearLayout.LayoutParams messageParams = new LinearLayout.LayoutParams(-2, -2);
         messageParams.topMargin = dp(6);
         card.addView(message, messageParams);
-
-        countdownView = new TextView(appContext);
-        countdownView.setTextColor(Color.rgb(220, 230, 245));
-        countdownView.setTextSize(13);
-        LinearLayout.LayoutParams countdownParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
+        this.countdownView = new TextView(this.appContext);
+        this.countdownView.setTextColor(Color.rgb(220, 230, 245));
+        this.countdownView.setTextSize(13.0f);
+        LinearLayout.LayoutParams countdownParams = new LinearLayout.LayoutParams(-2, -2);
         countdownParams.topMargin = dp(10);
-        card.addView(countdownView, countdownParams);
-
-        closeButton = new Button(appContext);
-        closeButton.setText("关闭");
-        closeButton.setEnabled(false);
-        closeButton.setOnClickListener(view -> dismissIfAllowed());
-        LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
+        card.addView(this.countdownView, countdownParams);
+        this.closeButton = new Button(this.appContext);
+        this.closeButton.setText("关闭");
+        this.closeButton.setEnabled(false);
+        this.closeButton.setOnClickListener(new View.OnClickListener() { // from class: com.example.nightscreenguard.GuardOverlay$$ExternalSyntheticLambda1
+            @Override // android.view.View.OnClickListener
+            public final void onClick(View view) {
+                GuardOverlay.this.lambda$createView$0(view);
+            }
+        });
+        LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(-1, -2);
         buttonParams.topMargin = dp(8);
-        card.addView(closeButton, buttonParams);
-
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                PixelFormat.TRANSLUCENT);
-        params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+        card.addView(this.closeButton, buttonParams);
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(-2, -2, 2038, 40, -3);
+        params.gravity = 81;
         params.y = dp(72);
-
         try {
-            windowManager.addView(card, params);
-            overlayView = card;
+            this.windowManager.addView(card, params);
+            this.overlayView = card;
         } catch (WindowManager.BadTokenException | SecurityException exception) {
-            overlayView = null;
+            this.overlayView = null;
             Log.w(TAG, "overlay_suppressed reason=window_add_failed", exception);
         }
     }
 
-    private void updateCountdown() {
-        if (overlayView == null || countdownView == null || closeButton == null) {
+    /* JADX INFO: Access modifiers changed from: private */
+    public /* synthetic */ void lambda$createView$0(View view) {
+        dismissIfAllowed();
+    }
+
+    /* JADX INFO: Access modifiers changed from: private */
+    public void updateCountdown() {
+        if (this.overlayView == null || this.countdownView == null || this.closeButton == null) {
             return;
         }
-        long remainingMillis = shownAt + GuardConfig.DEFAULT_COOLDOWN_SECONDS * 1000L
-                - System.currentTimeMillis();
+        long remainingMillis = (this.shownAt + 60000) - System.currentTimeMillis();
         if (remainingMillis <= 0) {
-            countdownView.setText("冷静期结束，可以关闭");
-            closeButton.setEnabled(true);
-            return;
+            this.countdownView.setText("冷静期结束，可以关闭");
+            this.closeButton.setEnabled(true);
+        } else {
+            long remainingSeconds = (999 + remainingMillis) / 1000;
+            this.countdownView.setText("还需冷静 " + remainingSeconds + " 秒");
+            this.closeButton.setEnabled(false);
+            this.mainHandler.postDelayed(new Runnable() { // from class: com.example.nightscreenguard.GuardOverlay$$ExternalSyntheticLambda0
+                @Override // java.lang.Runnable
+                public final void run() {
+                    GuardOverlay.this.updateCountdown();
+                }
+            }, Math.min(1000L, remainingMillis));
         }
-        long remainingSeconds = (remainingMillis + 999L) / 1000L;
-        countdownView.setText("还需冷静 " + remainingSeconds + " 秒");
-        closeButton.setEnabled(false);
-        mainHandler.postDelayed(this::updateCountdown, Math.min(1000L, remainingMillis));
     }
 
     private void removeView() {
-        mainHandler.removeCallbacksAndMessages(null);
-        if (overlayView != null && windowManager != null) {
+        this.mainHandler.removeCallbacksAndMessages(null);
+        if (this.overlayView != null && this.windowManager != null) {
             try {
-                windowManager.removeView(overlayView);
-            } catch (IllegalArgumentException ignored) {
-                // The system may remove an overlay while the display changes.
+                this.windowManager.removeView(this.overlayView);
+            } catch (IllegalArgumentException e) {
             }
         }
-        overlayView = null;
-        closeButton = null;
-        countdownView = null;
+        this.overlayView = null;
+        this.closeButton = null;
+        this.countdownView = null;
     }
 
     private int dp(int value) {
-        return Math.round(value * appContext.getResources().getDisplayMetrics().density);
+        return Math.round(value * this.appContext.getResources().getDisplayMetrics().density);
     }
 }
