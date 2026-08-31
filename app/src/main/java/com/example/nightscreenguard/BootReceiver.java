@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-/** Restores schedules after a device restart when the user left the guard enabled. */
+/* loaded from: classes2.dex */
 public final class BootReceiver extends BroadcastReceiver {
     private static final String TAG = "NightScreenGuard";
 
-    @Override
+    @Override // android.content.BroadcastReceiver
     public void onReceive(Context context, Intent intent) {
         GuardConfig config = GuardConfigStore.load(context);
         if (!config.enabled) {
@@ -17,7 +17,7 @@ public final class BootReceiver extends BroadcastReceiver {
         }
         AlarmScheduler.scheduleAll(context, config);
         try {
-            GuardService.start(context, new Intent(context, GuardService.class));
+            GuardService.start(context, new Intent(context, (Class<?>) GuardService.class));
         } catch (RuntimeException exception) {
             Log.w(TAG, "Unable to restore guard service after boot", exception);
         }

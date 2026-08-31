@@ -3,17 +3,17 @@ package com.example.nightscreenguard;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-/** Local-only SharedPreferences persistence for the guard profile. */
+/* loaded from: classes2.dex */
 public final class GuardConfigStore {
     private static final String FILE_NAME = "night_guard_config";
     private static final String KEY_ENABLED = "enabled";
-    private static final String KEY_MONITOR_START = "monitor_start";
     private static final String KEY_MONITOR_END = "monitor_end";
-    private static final String KEY_POINTS = "reminder_points";
-    private static final String KEY_STRONG_START = "strong_start";
+    private static final String KEY_MONITOR_START = "monitor_start";
     private static final String KEY_NORMAL_INTERVAL = "normal_interval";
-    private static final String KEY_STRONG_INTERVALS = "strong_intervals";
     private static final String KEY_OVERLAY_SHOWN_AT = "overlay_shown_at";
+    private static final String KEY_POINTS = "reminder_points";
+    private static final String KEY_STRONG_INTERVALS = "strong_intervals";
+    private static final String KEY_STRONG_START = "strong_start";
 
     private GuardConfigStore() {
     }
@@ -22,18 +22,8 @@ public final class GuardConfigStore {
         SharedPreferences preferences = preferences(context);
         GuardConfig defaults = GuardConfig.defaults();
         try {
-            return new GuardConfig(
-                    preferences.getBoolean(KEY_ENABLED, defaults.enabled),
-                    preferences.getInt(KEY_MONITOR_START, defaults.monitorStartMinute),
-                    preferences.getInt(KEY_MONITOR_END, defaults.monitorEndMinute),
-                    GuardConfig.parseMinuteList(preferences.getString(
-                            KEY_POINTS, defaults.reminderPointsText())),
-                    preferences.getInt(KEY_STRONG_START, defaults.strongStartMinute),
-                    preferences.getInt(KEY_NORMAL_INTERVAL, defaults.normalIntervalMinutes),
-                    GuardConfig.parsePositiveList(preferences.getString(
-                            KEY_STRONG_INTERVALS, defaults.strongIntervalsText())),
-                    GuardConfig.DEFAULT_COOLDOWN_SECONDS);
-        } catch (IllegalArgumentException exception) {
+            return new GuardConfig(preferences.getBoolean(KEY_ENABLED, defaults.enabled), preferences.getInt(KEY_MONITOR_START, defaults.monitorStartMinute), preferences.getInt(KEY_MONITOR_END, defaults.monitorEndMinute), GuardConfig.parseMinuteList(preferences.getString(KEY_POINTS, defaults.reminderPointsText())), preferences.getInt(KEY_STRONG_START, defaults.strongStartMinute), preferences.getInt(KEY_NORMAL_INTERVAL, defaults.normalIntervalMinutes), GuardConfig.parsePositiveList(preferences.getString(KEY_STRONG_INTERVALS, defaults.strongIntervalsText())), 60);
+        } catch (IllegalArgumentException e) {
             return defaults;
         }
     }
@@ -59,6 +49,6 @@ public final class GuardConfigStore {
     }
 
     private static SharedPreferences preferences(Context context) {
-        return context.getApplicationContext().getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+        return context.getApplicationContext().getSharedPreferences(FILE_NAME, 0);
     }
 }
